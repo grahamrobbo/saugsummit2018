@@ -25,6 +25,16 @@ CLASS zcl_demo_test_seams IMPLEMENTATION.
   METHOD change_price.
     DATA wa TYPE sflight.
 
+    TEST-SEAM authorisation.
+      AUTHORITY-CHECK OBJECT 'S_FLBOOK'
+         ID 'ACTVT' FIELD '02'.
+    END-TEST-SEAM.
+
+    IF sy-subrc <> 0.
+      new_price = - 3.
+      RETURN.
+    ENDIF.
+
     TEST-SEAM selection.
       SELECT SINGLE *
              FROM sflight
