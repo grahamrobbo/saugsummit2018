@@ -11,7 +11,7 @@ CLASS zcl_customer_provider DEFINITION
       IMPORTING
         !node_key TYPE snwd_node_key
       RAISING
-        zcx_demo_bo .
+        cx_abap_invalid_value .
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -21,13 +21,13 @@ CLASS zcl_customer_provider DEFINITION
       IMPORTING
         !node_key TYPE snwd_node_key
       RAISING
-        zcx_demo_bo .
+        cx_abap_invalid_value .
 
     METHODS get_country_text
       RETURNING
         VALUE(country_text) TYPE landx50
       RAISING
-        zcx_demo_bo .
+        cx_abap_invalid_value .
 
 ENDCLASS.
 
@@ -48,11 +48,9 @@ CLASS zcl_customer_provider IMPLEMENTATION.
       WHERE bp~node_key = @node_key.
 
       IF sy-subrc NE 0.
-        RAISE EXCEPTION TYPE zcx_demo_bo
+        RAISE EXCEPTION TYPE cx_abap_invalid_value
           EXPORTING
-            textid  = zcx_demo_bo=>not_found
-            bo_type = 'DEMO_CUSTOMER'
-            bo_id   = |{ node_key }|.
+            textid  = cx_abap_invalid_value=>cx_root.
       ENDIF.
     ENDSELECT.
 

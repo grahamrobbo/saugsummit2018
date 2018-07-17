@@ -58,8 +58,9 @@ CLASS ltc_customer IMPLEMENTATION.
 
     TRY.
         m_cut = zcl_customer=>get( test_customer_0-node_key ).
-      CATCH zcx_demo_bo.
+      CATCH cx_abap_invalid_value.
     ENDTRY.
+
   ENDMETHOD.
 
   METHOD teardown.
