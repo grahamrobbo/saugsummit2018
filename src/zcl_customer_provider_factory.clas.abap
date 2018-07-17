@@ -9,12 +9,12 @@ CLASS zcl_customer_provider_factory DEFINITION
                 !node_key         TYPE snwd_node_key
       RETURNING VALUE(r_instance) TYPE REF TO zif_customer_provider
       RAISING
-                zcx_demo_bo .
+                cx_abap_invalid_value .
 
     CLASS-METHODS get_node_key_from_bp_id
       IMPORTING bp_id           TYPE snwd_partner_id
       RETURNING VALUE(node_key) TYPE snwd_node_key
-      RAISING   zcx_demo_bo.
+      RAISING   cx_abap_invalid_value.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -63,11 +63,9 @@ CLASS zcl_customer_provider_factory IMPLEMENTATION.
       INTO @node_key
       WHERE bp_id = @lv_bp_id.
     IF sy-subrc NE 0.
-      RAISE EXCEPTION TYPE zcx_demo_bo
+      RAISE EXCEPTION TYPE cx_abap_invalid_value
         EXPORTING
-          textid  = zcx_demo_bo=>not_found
-          bo_type = 'Customer' ##NO_TEXT
-          bo_id   = |{ bp_id }|.
+          textid  = cx_abap_invalid_value=>cx_root.
     ENDIF.
   ENDMETHOD.
 
