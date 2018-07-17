@@ -38,21 +38,23 @@ CLASS zcl_customer_provider IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD load_data.
-    SELECT SINGLE bp~node_key, bp~bp_id, bp~company_name,
+    SELECT bp~node_key, bp~bp_id, bp~company_name,
       ad~street, ad~city, ad~postal_code, ad~country
+      UP TO 1 ROWS
       FROM snwd_bpa AS bp
         INNER JOIN snwd_ad AS ad
         ON bp~address_guid = ad~node_key
       INTO CORRESPONDING FIELDS OF @me->zif_customer_provider~customer_data
       WHERE bp~node_key = @node_key.
 
-    IF sy-subrc NE 0.
-      RAISE EXCEPTION TYPE zcx_demo_bo
-        EXPORTING
-          textid  = zcx_demo_bo=>not_found
-          bo_type = 'DEMO_CUSTOMER'
-          bo_id   = |{ node_key }|.
-    ENDIF.
+      IF sy-subrc NE 0.
+        RAISE EXCEPTION TYPE zcx_demo_bo
+          EXPORTING
+            textid  = zcx_demo_bo=>not_found
+            bo_type = 'DEMO_CUSTOMER'
+            bo_id   = |{ node_key }|.
+      ENDIF.
+    ENDSELECT.
 
     me->zif_customer_provider~customer_data-country_text = get_country_text( ).
 
