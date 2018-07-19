@@ -1,6 +1,6 @@
 CLASS zcl_customer_b4 DEFINITION
   PUBLIC
-  CREATE PROTECTED .
+  CREATE PRIVATE .
 
   PUBLIC SECTION.
 
@@ -106,6 +106,10 @@ CLASS zcl_customer_b4 IMPLEMENTATION.
     street = me->customer_data-street.
   ENDMETHOD.
 
+  METHOD zif_customer~get_address.
+    address = |{ zif_customer~get_street( ) }, { zif_customer~get_city( ) } { zif_customer~get_postal_code( ) }, { zif_customer~get_country_text( ) }|.
+  ENDMETHOD.
+
   METHOD zif_customer~get_country_text.
     TRY.
         country_text = countries[ land1 = me->customer_data-country ]-landx50.
@@ -117,6 +121,10 @@ CLASS zcl_customer_b4 IMPLEMENTATION.
           AND land1 = me->customer_data-country.
         IF sy-subrc = 0.
           country_text = countries[ land1 = me->customer_data-country ]-landx50.
+        ELSE.
+          RAISE EXCEPTION TYPE cx_abap_invalid_value
+            EXPORTING
+              textid = cx_abap_invalid_value=>cx_root.
         ENDIF.
     ENDTRY.
   ENDMETHOD.
