@@ -42,18 +42,25 @@ CLASS ltc_customer IMPLEMENTATION.
 
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-bp_id ).
     lo_customer_provider_double->get_bp_id( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-node_key ).
     lo_customer_provider_double->get_node_key( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-company_name ).
     lo_customer_provider_double->get_company_name( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-street ).
     lo_customer_provider_double->get_street( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-city ).
     lo_customer_provider_double->get_city( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-postal_code ).
     lo_customer_provider_double->get_postal_code( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-country ).
     lo_customer_provider_double->get_country( ).
+
     cl_abap_testdouble=>configure_call( lo_customer_provider_double )->returning( test_customer_0-country_text ).
     lo_customer_provider_double->get_country_text( ).
 
