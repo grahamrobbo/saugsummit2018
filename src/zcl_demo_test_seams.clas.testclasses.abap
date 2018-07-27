@@ -17,6 +17,25 @@ ENDCLASS.
 CLASS test_demo_test_seam IMPLEMENTATION.
 
   METHOD setup.
+**********************************************************************
+* Failing test injection in setup method for every test seam         *
+*                                                                    *
+* This makes it easy to recognise when I forget to define a test     *
+* injection in a test                                                *
+**********************************************************************
+
+    TEST-INJECTION authorisation.
+      cl_abap_unit_assert=>fail( msg = 'Redefine me' ).
+    END-TEST-INJECTION.
+
+    TEST-INJECTION selection.
+      cl_abap_unit_assert=>fail( msg = 'Redefine me' ).
+    END-TEST-INJECTION.
+
+    TEST-INJECTION modification.
+      cl_abap_unit_assert=>fail( msg = 'Redefine me' ).
+    END-TEST-INJECTION.
+**********************************************************************
 
     TEST-INJECTION authorisation.
     END-TEST-INJECTION.
