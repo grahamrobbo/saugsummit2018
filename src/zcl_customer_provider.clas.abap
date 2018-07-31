@@ -17,15 +17,11 @@ CLASS zcl_customer_provider DEFINITION
   PRIVATE SECTION.
     CLASS-DATA countries TYPE TABLE OF t005t.
 
+    DATA customer_data TYPE zif_customer_provider=>customer_type.
+
     METHODS load_data
       IMPORTING
         !node_key TYPE snwd_node_key
-      RAISING
-        cx_abap_invalid_value .
-
-    METHODS get_country_text
-      RETURNING
-        VALUE(country_text) TYPE landx50
       RAISING
         cx_abap_invalid_value .
 
@@ -44,7 +40,7 @@ CLASS zcl_customer_provider IMPLEMENTATION.
       FROM snwd_bpa AS bp
         INNER JOIN snwd_ad AS ad
         ON bp~address_guid = ad~node_key
-      INTO CORRESPONDING FIELDS OF @me->zif_customer_provider~customer_data
+      INTO CORRESPONDING FIELDS OF @me->customer_data
       WHERE bp~node_key = @node_key.
 
       IF sy-subrc NE 0.
@@ -54,21 +50,47 @@ CLASS zcl_customer_provider IMPLEMENTATION.
       ENDIF.
     ENDSELECT.
 
-    me->zif_customer_provider~customer_data-country_text = get_country_text( ).
-
   ENDMETHOD.
 
-  METHOD get_country_text.
+  METHOD zif_customer_provider~get_node_key.
+    node_key = me->customer_data-node_key.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_bp_id.
+    bp_id = me->customer_data-bp_id.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_company_name.
+    company_name = me->customer_data-company_name.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_street.
+    street = me->customer_data-street.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_city.
+    city = me->customer_data-city.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_postal_code.
+    postal_code = me->customer_data-postal_code.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_country.
+    country = me->customer_data-country.
+  ENDMETHOD.
+
+  METHOD zif_customer_provider~get_country_text.
     TRY.
-        country_text = countries[ land1 = me->zif_customer_provider~customer_data-country ]-landx50.
+        country_text = countries[ land1 = me->customer_data-country ]-landx50.
       CATCH cx_sy_itab_line_not_found.
         SELECT land1 landx50
           FROM t005t
           APPENDING CORRESPONDING FIELDS OF TABLE countries
           WHERE spras = sy-langu
-          AND land1 = me->zif_customer_provider~customer_data-country.
+          AND land1 = me->customer_data-country.
         IF sy-subrc = 0.
-          country_text = countries[ land1 = me->zif_customer_provider~customer_data-country ]-landx50.
+          country_text = countries[ land1 = me->customer_data-country ]-landx50.
         ELSE.
           RAISE EXCEPTION TYPE cx_abap_invalid_value
             EXPORTING
