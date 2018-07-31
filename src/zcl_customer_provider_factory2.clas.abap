@@ -7,7 +7,7 @@ CLASS zcl_customer_provider_factory2 DEFINITION
     CLASS-METHODS get_customer_provider
       IMPORTING
                 !node_key         TYPE snwd_node_key
-      RETURNING VALUE(r_instance) TYPE REF TO zif_customer_provider2
+      RETURNING VALUE(r_provider) TYPE REF TO zif_customer_provider2
       RAISING
                 cx_abap_invalid_value .
 
@@ -19,27 +19,27 @@ CLASS zcl_customer_provider_factory2 DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
     TYPES:
-      BEGIN OF instance_type,
+      BEGIN OF provider_type,
         node_key TYPE snwd_node_key,
         instance TYPE REF TO zif_customer_provider2,
-      END OF instance_type .
+      END OF provider_type .
     TYPES:
-      instance_ttype TYPE TABLE OF instance_type .
+      provider_ttype TYPE TABLE OF provider_type .
 
-    CLASS-DATA instances TYPE instance_ttype .
+    CLASS-DATA providers TYPE provider_ttype .
 ENDCLASS.
 
 CLASS zcl_customer_provider_factory2 IMPLEMENTATION.
   METHOD get_customer_provider.
     TRY.
-        DATA(inst) = instances[ node_key = node_key ].
+        DATA(provider) = providers[ node_key = node_key ].
       CATCH cx_sy_itab_line_not_found.
-        inst-node_key = node_key.
-        inst-instance = NEW zcl_customer_provider2( inst-node_key ).
-        APPEND inst TO instances.
+        provider-node_key = node_key.
+        provider-instance = NEW zcl_customer_provider2( provider-node_key ).
+        APPEND provider TO providers.
     ENDTRY.
 
-    r_instance ?= inst-instance.
+    r_provider ?= provider-instance.
 
   ENDMETHOD.
 
@@ -51,9 +51,9 @@ CLASS zcl_customer_provider_factory2 IMPLEMENTATION.
       IMPORTING
         output = lv_bp_id.
 
-    LOOP AT instances REFERENCE INTO DATA(inst).
-      IF inst->instance->get_bp_id( ) = lv_bp_id.
-        node_key = inst->instance->get_node_key( ).
+    LOOP AT providers REFERENCE INTO DATA(provider).
+      IF provider->instance->get_bp_id( ) = lv_bp_id.
+        node_key = provider->instance->get_node_key( ).
         RETURN.
       ENDIF.
     ENDLOOP.

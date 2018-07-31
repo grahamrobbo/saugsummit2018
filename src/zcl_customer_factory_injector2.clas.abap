@@ -23,13 +23,13 @@ ENDCLASS.
 
 CLASS zcl_customer_factory_injector2 IMPLEMENTATION.
   METHOD inject_customer_provider.
-    APPEND INITIAL LINE TO zcl_customer_provider_factory2=>instances REFERENCE INTO DATA(inst).
+    APPEND INITIAL LINE TO zcl_customer_provider_factory2=>providers REFERENCE INTO DATA(inst).
     inst->node_key = i_customer_provider->get_node_key( ).
     inst->instance = i_customer_provider.
   ENDMETHOD.
 
   METHOD reset_customer_providers.
-    CLEAR zcl_customer_provider_factory2=>instances.
+    CLEAR zcl_customer_provider_factory2=>providers.
   ENDMETHOD.
 
 ENDCLASS.

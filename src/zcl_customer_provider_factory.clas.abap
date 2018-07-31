@@ -7,7 +7,7 @@ CLASS zcl_customer_provider_factory DEFINITION
     CLASS-METHODS get_customer_provider
       IMPORTING
                 !node_key         TYPE snwd_node_key
-      RETURNING VALUE(r_instance) TYPE REF TO zif_customer_provider
+      RETURNING VALUE(r_provider) TYPE REF TO zif_customer_provider
       RAISING
                 cx_abap_invalid_value .
 
@@ -19,27 +19,27 @@ CLASS zcl_customer_provider_factory DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
     TYPES:
-      BEGIN OF instance_type,
+      BEGIN OF provider_type,
         node_key TYPE snwd_node_key,
         instance TYPE REF TO zif_customer_provider,
-      END OF instance_type .
+      END OF provider_type .
     TYPES:
-      instance_ttype TYPE TABLE OF instance_type .
+      provider_ttype TYPE TABLE OF provider_type .
 
-    CLASS-DATA instances TYPE instance_ttype .
+    CLASS-DATA providers TYPE provider_ttype .
 ENDCLASS.
 
 CLASS zcl_customer_provider_factory IMPLEMENTATION.
   METHOD get_customer_provider.
     TRY.
-        DATA(inst) = instances[ node_key = node_key ].
+        DATA(provider) = providers[ node_key = node_key ].
       CATCH cx_sy_itab_line_not_found.
-        inst-node_key = node_key.
-        inst-instance = NEW zcl_customer_provider( inst-node_key ).
-        APPEND inst TO instances.
+        provider-node_key = node_key.
+        provider-instance = NEW zcl_customer_provider( provider-node_key ).
+        APPEND provider TO providers.
     ENDTRY.
 
-    r_instance ?= inst-instance.
+    r_provider ?= provider-instance.
 
   ENDMETHOD.
 
@@ -51,9 +51,9 @@ CLASS zcl_customer_provider_factory IMPLEMENTATION.
       IMPORTING
         output = lv_bp_id.
 
-    LOOP AT instances REFERENCE INTO DATA(inst).
-      IF inst->instance->customer_data-bp_id = lv_bp_id.
-        node_key = inst->instance->customer_data-node_key.
+    LOOP AT providers REFERENCE INTO DATA(provider).
+      IF provider->instance->customer_data-bp_id = lv_bp_id.
+        node_key = provider->instance->customer_data-node_key.
         RETURN.
       ENDIF.
     ENDLOOP.
@@ -65,7 +65,7 @@ CLASS zcl_customer_provider_factory IMPLEMENTATION.
     IF sy-subrc NE 0.
       RAISE EXCEPTION TYPE cx_abap_invalid_value
         EXPORTING
-          textid  = cx_abap_invalid_value=>cx_root.
+          textid = cx_abap_invalid_value=>cx_root.
     ENDIF.
   ENDMETHOD.
 
