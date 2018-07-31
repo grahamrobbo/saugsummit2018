@@ -23,10 +23,11 @@ CLASS zcl_customer_provider_factory DEFINITION
         node_key TYPE snwd_node_key,
         instance TYPE REF TO zif_customer_provider,
       END OF provider_type .
-    TYPES:
-      provider_ttype TYPE TABLE OF provider_type .
 
-    CLASS-DATA providers TYPE provider_ttype .
+    CLASS-DATA providers TYPE TABLE OF provider_type .
+
+    CLASS-METHODS reset_customer_providers.
+
 ENDCLASS.
 
 CLASS zcl_customer_provider_factory IMPLEMENTATION.
@@ -43,6 +44,10 @@ CLASS zcl_customer_provider_factory IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD reset_customer_providers.
+    CLEAR zcl_customer_provider_factory=>providers.
+  ENDMETHOD.
+
   METHOD get_node_key_from_bp_id.
     DATA: lv_bp_id TYPE snwd_partner_id.
     CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
@@ -52,8 +57,8 @@ CLASS zcl_customer_provider_factory IMPLEMENTATION.
         output = lv_bp_id.
 
     LOOP AT providers REFERENCE INTO DATA(provider).
-      IF provider->instance->customer_data-bp_id = lv_bp_id.
-        node_key = provider->instance->customer_data-node_key.
+      IF provider->instance->get_bp_id( ) = lv_bp_id.
+        node_key = provider->instance->get_node_key( ).
         RETURN.
       ENDIF.
     ENDLOOP.

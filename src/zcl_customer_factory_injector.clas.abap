@@ -13,8 +13,8 @@ CLASS zcl_customer_factory_injector DEFINITION FOR TESTING "secure access only i
   CREATE PRIVATE . "static class
   PUBLIC SECTION.
     CLASS-METHODS inject_customer_provider
-      IMPORTING i_customer_provider TYPE REF TO zif_customer_provider.
-    CLASS-METHODS reset_customer_providers.
+      IMPORTING i_customer_provider TYPE REF TO zif_customer_provider
+      RAISING   cx_abap_invalid_value.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -22,13 +22,10 @@ ENDCLASS.
 
 CLASS zcl_customer_factory_injector IMPLEMENTATION.
   METHOD inject_customer_provider.
+    DELETE zcl_customer_provider_factory=>providers WHERE node_key = i_customer_provider->get_node_key( ).
     APPEND INITIAL LINE TO zcl_customer_provider_factory=>providers REFERENCE INTO DATA(provider).
-    provider->node_key = i_customer_provider->customer_data-node_key.
+    provider->node_key = i_customer_provider->get_node_key( ).
     provider->instance = i_customer_provider.
-  ENDMETHOD.
-
-  METHOD reset_customer_providers.
-    CLEAR zcl_customer_provider_factory=>providers.
   ENDMETHOD.
 
 ENDCLASS.
